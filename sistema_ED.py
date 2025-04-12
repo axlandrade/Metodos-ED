@@ -1,3 +1,5 @@
+#Método para resolver um sistema de EDOs de 1ª ordem com Runge-Kutta de 4ª ordem e Euler
+
 import numpy as np
 import matplotlib.pyplot as plt
 
