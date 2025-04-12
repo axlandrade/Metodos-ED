@@ -48,13 +48,13 @@ y_exata = y_analitica(x)
 
 #Plot
 
+plt.plot(x, y_exata, label='Solução analítica $\dfrac{1}{1-\dfrac{x^2}{2}}$', linestyle='-', color='red')
 plt.plot(x, y_euler, label='Euler', linestyle ='--', color='blue')
-plt.plot(x, y_exata, label='Exata', linestyle='-', color='red')
 plt.plot(x, y_rk4, label='Runge-Kutta 4ª ordem', linestyle=':', color='green')
 plt.plot(x, abs(y_euler - y_exata), label='Erro Euler', linestyle='--', color='brown', alpha=0.5)
 plt.plot(x, abs(y_rk4 - y_exata), label='Erro RK4', linestyle=':', color='black', alpha=0.5)
 plt.xticks(np.round(np.arange(0, 1.1, 0.1), 1))
-plt.title('Comparação entre soluções numérica e exata')
+plt.title('Comparação: Euler vs RK4 vs Solução Analítica')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.legend()
