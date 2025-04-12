@@ -1,3 +1,5 @@
+#Método para Resolver ED de 2 ordem com Runge-Kutta de 4ª ordem e Euler
+
 import numpy as np
 import matplotlib.pyplot as plt
 
