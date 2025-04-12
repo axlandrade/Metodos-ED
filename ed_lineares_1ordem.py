@@ -42,6 +42,7 @@ for i in range(n - 1):
 
 # Plotando os gráficos
 
+plt.figure(figsize=(10, 6))
 plt.plot(x, y_exact, label='Solução analítica $e^{-x}$', color='red')
 plt.plot(x, y_euler, label='Euler', color='Blue', linestyle='--')
 plt.plot(x, y_rk4, label='RK4', color='green' , linestyle='dotted')

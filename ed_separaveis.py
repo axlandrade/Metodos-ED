@@ -48,6 +48,7 @@ y_exata = y_analitica(x)
 
 #Plot
 
+plt.figure(figsize=(10, 6))
 plt.plot(x, y_exata, label='Solução analítica $\dfrac{1}{1-\dfrac{x^2}{2}}$', linestyle='-', color='red')
 plt.plot(x, y_euler, label='Euler', linestyle ='--', color='blue')
 plt.plot(x, y_rk4, label='Runge-Kutta 4ª ordem', linestyle=':', color='green')
