@@ -1,59 +1,98 @@
-# Metodo para resolver EDOs de 1a ordem Lineares com Runge-Kutta de 4a ordem e Euler
+# ed_lineares_1ordem.py
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Definindo a funcao f(x, y)
+# --- Definições da EDO e Solução Analítica ---
+
 def f(x, y):
+    """ Define a EDO: y' = e^(-x) - 2y """
     return np.exp(-x) - 2 * y
 
-# Solucao analitica
 def y_analitica(x):
+    """ Solução analítica da EDO com y(0)=1: y(x) = e^(-x) """
     return np.exp(-x)
 
-# Condicoes iniciais e parametros
+# --- Métodos Numéricos ---
+
+def euler(f, y0, x):
+    """
+    Resolve y' = f(x, y) usando o método de Euler.
+    
+    Args:
+        f (function): A função que define a EDO.
+        y0 (float): A condição inicial y(x0).
+        x (np.array): O array de pontos x para a solução.
+        
+    Returns:
+        np.array: O array com a solução y(x).
+    """
+    y = np.zeros_like(x)
+    y[0] = y0
+    for i in range(len(x) - 1):
+        h = x[i+1] - x[i]
+        y[i+1] = y[i] + h * f(x[i], y[i])
+    return y
+
+def rk4(f, y0, x):
+    """
+    Resolve y' = f(x, y) usando o método de Runge-Kutta de 4ª Ordem.
+    
+    Args:
+        f (function): A função que define a EDO.
+        y0 (float): A condição inicial y(x0).
+        x (np.array): O array de pontos x para a solução.
+        
+    Returns:
+        np.array: O array com a solução y(x).
+    """
+    y = np.zeros_like(x)
+    y[0] = y0
+    for i in range(len(x) - 1):
+        h = x[i+1] - x[i]
+        xi, yi = x[i], y[i]
+        
+        k1 = f(xi, yi)
+        k2 = f(xi + h / 2, yi + h * k1 / 2)
+        k3 = f(xi + h / 2, yi + h * k2 / 2)
+        k4 = f(xi + h, yi + h * k3)
+        
+        y[i+1] = yi + (h / 6.0) * (k1 + 2*k2 + 2*k3 + k4)
+    return y
+
+# --- Configuração da Simulação ---
+
 x0 = 0
 y0 = 1
 x_final = 2
-h = 0.1
-n = int((x_final - x0) / h) + 1
+h = 0.1  # Passo
 
-# Malha
-x = np.linspace(x0, x_final, n)
+# Malha de pontos
+x = np.arange(x0, x_final + h, h)
 
-# Vetores para armazenar as solucoes
-y_euler = np.zeros(n)
-y_rk4 = np.zeros(n)
-y_exact = y_analitica(x)
+# --- Execução e Geração do Gráfico ---
 
-# Condicao inicial
-y_euler[0] = y0
-y_rk4[0] = y0
+# Soluções
+y_exata = y_analitica(x)
+y_euler = euler(f, y0, x)
+y_rk4 = rk4(f, y0, x)
 
-# Metodo de Euler
-for i in range(n - 1):
-    y_euler[i + 1] = y_euler[i] + h * f(x[i], y_euler[i])
+# Erros
+erro_euler = np.abs(y_euler - y_exata)
+erro_rk4 = np.abs(y_rk4 - y_exata)
 
-# Metodo de Runge-Kutta 4a ordem
-for i in range(n - 1):
-    k1 = f(x[i], y_rk4[i])
-    k2 = f(x[i] + h / 2, y_rk4[i] + h * k1 / 2)
-    k3 = f(x[i] + h / 2, y_rk4[i] + h * k2 / 2)
-    k4 = f(x[i] + h, y_rk4[i] + h * k3)
-    y_rk4[i + 1] = y_rk4[i] + (h / 6)*(k1 + 2*k2 + 2*k3 + k4)
+# Plot
+plt.figure(figsize=(12, 8))
+plt.plot(x, y_exata, 'r-', label='Solução Analítica: $e^{-x}$', linewidth=2)
+plt.plot(x, y_euler, 'b--o', label='Euler', markersize=4)
+plt.plot(x, y_rk4, 'g--s', label='RK4', markersize=4)
+plt.plot(x, erro_euler, '--', color='brown', label='Erro Euler', alpha=0.6)
+plt.plot(x, erro_rk4, ':', color='black', label='Erro RK4', alpha=0.6)
 
-# Plotando os graficos
-
-plt.figure(figsize=(10, 6))
-plt.plot(x, y_exact, label='Solucao analitica e^(-x)', color='red')
-plt.plot(x, y_euler, label='Euler', color='Blue', linestyle='--')
-plt.plot(x, y_rk4, label='RK4', color='green' , linestyle='dotted')
-plt.plot(x, abs(y_euler - y_exact), label='Erro Euler', color='brown',linestyle='--', alpha=0.5)
-plt.plot(x, abs(y_rk4 - y_exact), label='Erro RK4', color='black', linestyle='dotted', alpha=0.5)
+plt.title("Comparação de Métodos para $y' = e^{-x} - 2y$")
 plt.xlabel('x')
-plt.ylabel('y')
-plt.title('Comparacao: Euler vs RK4 vs Solucao Analitica')
+plt.ylabel('y / Erro')
 plt.grid(True)
 plt.legend()
-plt.xticks(np.round(np.arange(0, x_final+0.1, 0.1), 1))
+plt.ylim(bottom=0)
 plt.show()
